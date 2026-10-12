@@ -119,10 +119,12 @@ Diby only works while VS Code is open with the extension running.
 | --- | --- | --- |
 | `diby.mode` | `steady` | `off`, `checkup`, `steady` or `learn`. How often agents may hand you functions. |
 | `diby.offerStyle` | `modal` | How offers are shown: `modal` (a dialog that waits for your answer), `panel` (an editor tab with the full spec and Accept / Skip / Snooze) or `notification` (a toast, easy to miss). A pending offer also stays on the status bar until you answer. Unanswered offers expire after 2 minutes. |
+| `diby.quietHours` | `""` | Daily local-time window with no offers, e.g. `22:00-07:30` (may cross midnight). Empty for none. |
 | `diby.focusConcepts` | `[]` | Concepts you want to practise (e.g. `recursion`, `parsing`). Preferred when choosing challenges. |
 | `diby.avoidConcepts` | `[]` | Concepts you never want to be handed. |
 | `diby.maxDifficulty` | `5` | Highest difficulty (1-5) Diby will accept. |
 | `diby.testTimeoutSec` | `60` | Seconds before a test run is killed (5-600). |
+| `diby.disableInlineSuggestions` | `true` | Turn off inline suggestions (Copilot ghost text and similar) while a challenge is active; restored when it ends. |
 | `diby.askForReflection` | `true` | Ask for an optional one-line reflection after you pass. |
 | `diby.python.disablePluginAutoload` | `false` | Set `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` for Python challenges. Enable it if unrelated packages on `PYTHONPATH` (for example a sourced ROS environment) register broken pytest plugins. |
 

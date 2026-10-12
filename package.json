@@ -2,7 +2,7 @@
   "name": "diby",
   "displayName": "Diby",
   "description": "Do it by yourself: let your coding agent hand you a function to implement, with a spec and tests, so your skills stay sharp. Works with Claude Code, Codex and GitHub Copilot.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "seamusmullan",
   "license": "MIT",
   "icon": "media/icon-square.png",
@@ -154,6 +154,13 @@
           "default": "modal",
           "description": "How Diby asks whether you want to take a function. A pending offer also shows on the status bar until you answer."
         },
+        "diby.quietHours": {
+          "type": "string",
+          "default": "",
+          "pattern": "^\\s*$|^\\s*\\d{1,2}:\\d{2}\\s*-\\s*\\d{1,2}:\\d{2}\\s*$",
+          "patternErrorMessage": "Use HH:MM-HH:MM in 24-hour local time, e.g. 22:00-07:30.",
+          "markdownDescription": "Daily local-time window with no offers, as `HH:MM-HH:MM` (e.g. `22:00-07:30`; may cross midnight). Leave empty for none."
+        },
         "diby.focusConcepts": {
           "type": "array",
           "items": {
@@ -188,6 +195,11 @@
           "type": "boolean",
           "default": false,
           "description": "Set PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 when running Python challenges. Turn on if unrelated packages on PYTHONPATH (e.g. a sourced ROS environment) register broken pytest plugins."
+        },
+        "diby.disableInlineSuggestions": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Turn off inline suggestions (`#editor.inlineSuggest.enabled#`, e.g. Copilot ghost text) while a challenge is active, and restore them afterwards."
         },
         "diby.askForReflection": {
           "type": "boolean",

@@ -284,6 +284,10 @@ export interface PolicySettings {
   focusConcepts: string[];
   avoidConcepts: string[];
   maxDifficulty: Difficulty;
+  /** `diby.quietHours`, e.g. `"22:00-07:30"`; empty or invalid means no quiet hours. */
+  quietHours?: string;
+  /** Local time minus UTC in minutes, for quiet hours. Defaults to 0 (UTC). */
+  tzOffsetMinutes?: number;
 }
 
 /** All Diby settings (`diby.*` in package.json). */

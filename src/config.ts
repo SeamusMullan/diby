@@ -27,6 +27,9 @@ export function readSettings(): DibySettings {
     maxDifficulty: clampDifficulty(c.get('maxDifficulty')),
     testTimeoutSec: Math.min(600, Math.max(5, c.get<number>('testTimeoutSec', 60))),
     askForReflection: c.get<boolean>('askForReflection', true),
+    quietHours: c.get<string>('quietHours', '').trim(),
+    // getTimezoneOffset() is UTC minus local.
+    tzOffsetMinutes: -new Date().getTimezoneOffset(),
   };
 }
 

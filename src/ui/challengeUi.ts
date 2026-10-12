@@ -12,6 +12,7 @@ import { ChallengePanel } from './ChallengePanel';
 import { ChallengeCodeLensProvider } from './codelens';
 import { RegionDecorations } from './decorations';
 import { DibyStatusBar } from './statusBar';
+import { InlineSuggestGuard } from './inlineSuggest';
 import { offerDetail, offerMessage } from './offerText';
 import { extractRange, shiftRangeAll } from './textRange';
 
@@ -35,7 +36,10 @@ function uriOf(challenge: Challenge): vscode.Uri {
 export function createChallengeUi(
   context: vscode.ExtensionContext,
   getStats?: () => PracticeStats,
+  log?: (message: string) => void,
 ): ChallengeUi & vscode.Disposable {
+  const inlineSuggest = new InlineSuggestGuard(context.globalState, log);
+  void inlineSuggest.recover();
   let pendingOffer: PendingOffer | undefined;
   const panel = new ChallengePanel((id, answer) => {
     if (pendingOffer?.challenge.id === id) pendingOffer.settle(answer);
@@ -162,6 +166,7 @@ export function createChallengeUi(
       applyRegion();
       statusBar.set(challenge);
       panel.show(challenge, true);
+      void inlineSuggest.suppress(uriOf(challenge));
     },
 
     refresh(challenge: Challenge): void {
@@ -178,6 +183,7 @@ export function createChallengeUi(
       if (pendingOffer?.challenge.id === challenge.id) pendingOffer.settle('skip');
       if (tracked?.id !== challenge.id) return;
       tracked = undefined;
+      void inlineSuggest.restore();
       decorations.set(undefined);
       lenses.set(undefined);
       statusBar.set(undefined);

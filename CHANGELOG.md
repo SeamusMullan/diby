@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-10-12
+
+### Added
+
+- `diby.quietHours` setting: a daily local-time window (e.g. `22:00-07:30`) in which agents' offers are declined.
+- `diby.disableInlineSuggestions` (on by default): inline suggestions such as Copilot ghost text are turned off while a challenge is active and restored afterwards, including after a crash.
+
 ## [0.0.3] - 2026-10-12
 
 ### Added

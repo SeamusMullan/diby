@@ -2,6 +2,7 @@
  * MODULE core-ui — frequency policy. PURE: no vscode, no Date.now(), no I/O.
  */
 import type { DibyMode, HistoryEntry, PolicyFn } from '../types';
+import { formatMinuteOfDay, inQuietHours, localMinuteOfDay, parseQuietHours } from './quietHours';
 
 /** Minimum gap between *offered* challenges, per mode (ms). `off` never offers. */
 export const MODE_MIN_INTERVAL_MS: Readonly<Record<Exclude<DibyMode, 'off'>, number>> = {
@@ -33,6 +34,14 @@ function recentlyIgnored(offered: readonly HistoryEntry[]): boolean {
 export const decide: PolicyFn = (candidate, history, settings, now) => {
   const { mode } = settings;
   if (mode === 'off') return { decision: 'decline', reason: 'Diby is switched off (diby.mode = off)' };
+
+  const quiet = settings.quietHours ? parseQuietHours(settings.quietHours) : undefined;
+  if (quiet && inQuietHours(quiet, localMinuteOfDay(now, settings.tzOffsetMinutes ?? 0))) {
+    return {
+      decision: 'decline',
+      reason: `quiet hours (${formatMinuteOfDay(quiet.start)}-${formatMinuteOfDay(quiet.end)} local time)`,
+    };
+  }
 
   if (candidate.difficulty > settings.maxDifficulty) {
     return {

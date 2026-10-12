@@ -42,7 +42,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const history = new MementoHistoryStore(context.globalState);
   // getTimezoneOffset() is UTC minus local; stats want local minus UTC.
   const stats = () => computeStats(history.all(), Date.now(), -new Date().getTimezoneOffset());
-  const ui = createChallengeUi(context, stats);
+  const ui = createChallengeUi(context, stats, log);
   context.subscriptions.push(ui);
   const manager = new ChallengeManager({
     ui,

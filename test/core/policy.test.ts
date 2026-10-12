@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { decide, MODE_MIN_INTERVAL_MS } from '../../src/core/policy';
+import { formatMinuteOfDay, inQuietHours, localMinuteOfDay } from '../../src/core/quietHours';
 import type { HistoryEntry, PolicyCandidate, PolicySettings } from '../../src/types';
 
 const MIN = 60_000;
@@ -103,5 +104,41 @@ describe('decide', () => {
     const copy = JSON.stringify(h);
     expect(decide(cand(), h, settings(), NOW)).toEqual(decide(cand(), h, settings(), NOW));
     expect(JSON.stringify(h)).toBe(copy);
+  });
+});
+
+describe('quiet hours', () => {
+  // NOW = 2001-09-09T01:46:40Z, i.e. 01:46 UTC.
+  it('declines inside the window, using local time', () => {
+    const night = decide(cand(), [], settings({ quietHours: '22:00-07:30', tzOffsetMinutes: 0 }), NOW);
+    expect(night).toEqual({ decision: 'decline', reason: 'quiet hours (22:00-07:30 local time)' });
+    // 01:46 UTC is 11:46 in UTC+10: outside the window.
+    expect(decide(cand(), [], settings({ quietHours: '22:00-07:30', tzOffsetMinutes: 600 }), NOW).decision).toBe('accept');
+  });
+
+  it('ignores empty or invalid quiet hours', () => {
+    for (const quietHours of ['', 'nope', '01:00-01:00']) {
+      expect(decide(cand(), [], settings({ quietHours }), NOW).decision).toBe('accept');
+    }
+  });
+});
+
+describe('quiet hours helpers', () => {
+  it('localMinuteOfDay applies the offset and wraps around midnight', () => {
+    expect(localMinuteOfDay(NOW, 0)).toBe(106);
+    expect(localMinuteOfDay(NOW, -120)).toBe(1440 - 14);
+    expect(localMinuteOfDay(NOW, 23 * 60)).toBe(46);
+  });
+
+  it('inQuietHours handles same-day and overnight windows, end exclusive', () => {
+    const day = { start: 540, end: 1020 };
+    expect([539, 540, 1019, 1020].map((m) => inQuietHours(day, m))).toEqual([false, true, true, false]);
+    const night = { start: 1320, end: 450 };
+    expect([1319, 1320, 0, 449, 450].map((m) => inQuietHours(night, m))).toEqual([false, true, true, true, false]);
+  });
+
+  it('formatMinuteOfDay pads hours and minutes', () => {
+    expect(formatMinuteOfDay(450)).toBe('07:30');
+    expect(formatMinuteOfDay(0)).toBe('00:00');
   });
 });
