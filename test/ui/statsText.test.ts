@@ -3,7 +3,7 @@ import type { PracticeStats } from '../../src/core/stats';
 import { formatStats } from '../../src/ui/statsText';
 
 const base: PracticeStats = {
-  offered: 0, passed: 0, gaveUp: 0, declined: 0, passRate: undefined, streakDays: 0, concepts: [],
+  offered: 0, passed: 0, gaveUp: 0, declined: 0, passRate: undefined, streakDays: 0, concepts: [], needsPractice: [],
 };
 
 describe('formatStats', () => {
@@ -26,6 +26,11 @@ describe('formatStats', () => {
       'Offered 9, declined 2',
       'Top concepts: a 1/2, b 1/2, c 1/2, d 1/2, e 1/2',
     ]);
+  });
+
+  it('lists concepts that need practice', () => {
+    const regex = { concept: 'regex', passed: 0, attempted: 2 };
+    expect(formatStats({ ...base, concepts: [regex], needsPractice: [regex] }).at(-1)).toBe('Needs practice: regex 0/2');
   });
 
   it('uses the singular for a one-day streak', () => {

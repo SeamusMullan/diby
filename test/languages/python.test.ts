@@ -97,7 +97,7 @@ describe('registry', () => {
     expect(reg.get('cobol').id).toBe('generic');
     expect(reg.has('python3')).toBe(true);
     expect(reg.has('cobol')).toBe(false);
-    expect(reg.list().map((a) => a.id)).toEqual(['python', 'generic']);
+    expect(reg.list().map((a) => a.id)).toEqual(['python', 'typescript', 'generic']);
   });
   it('passes the interpreter resolver through', async () => {
     const reg = createLanguageRegistry({ python: { resolveInterpreter: async () => '/x/python' } });

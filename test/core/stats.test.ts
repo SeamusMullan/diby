@@ -13,7 +13,7 @@ const entry = (status: ChallengeStatus, concepts: string[] = [], offered = true)
 describe('computeStats', () => {
   it('handles empty history', () => {
     expect(computeStats([], NOW, 0)).toEqual({
-      offered: 0, passed: 0, gaveUp: 0, declined: 0, passRate: undefined, streakDays: 0, concepts: [],
+      offered: 0, passed: 0, gaveUp: 0, declined: 0, passRate: undefined, streakDays: 0, concepts: [], needsPractice: [],
     });
   });
 
@@ -47,5 +47,6 @@ describe('computeStats', () => {
       { concept: 'dup', passed: 1, attempted: 1 },
       { concept: 'date-handling', passed: 0, attempted: 1 },
     ]);
+    expect(s.needsPractice).toEqual([{ concept: 'regex', passed: 1, attempted: 2 }]);
   });
 });

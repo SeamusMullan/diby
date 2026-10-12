@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 2026-10-12
+
+### Added
+
+- **Show Stats** lists the concepts that need practice: the lowest pass rates among concepts you attempted at least twice.
+- TypeScript / JavaScript adapter: vitest challenges show per-test results, failure diffs and editor diagnostics in the panel instead of exit-code-only output.
+
+### Fixed
+
+- The challenge panel fell back to a serif font when `editor.fontFamily` named a font without a generic fallback.
+
 ## [0.0.2] - 2026-10-12
 
 ### Added

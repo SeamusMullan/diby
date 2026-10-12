@@ -5,6 +5,9 @@ import type { HistoryEntry } from '../types';
 import { normalizeConcept } from './policy';
 
 const DAY_MS = 24 * 60 * 60_000;
+/** A concept needs this many attempts before it can be flagged as needing practice. */
+const WEAK_MIN_ATTEMPTS = 2;
+const WEAK_LIMIT = 3;
 
 export interface ConceptStats {
   concept: string;
@@ -24,6 +27,8 @@ export interface PracticeStats {
   streakDays: number;
   /** Per-concept totals over attempted challenges, most passed first. */
   concepts: ConceptStats[];
+  /** Concepts with the lowest pass rate (see `weakestConcepts`). */
+  needsPractice: ConceptStats[];
 }
 
 /** Summarise history. `tzOffsetMinutes` is local time minus UTC (e.g. 60 for UTC+1). */
@@ -56,6 +61,7 @@ export function computeStats(entries: readonly HistoryEntry[], now: number, tzOf
     passRate: finished === 0 ? undefined : passed / finished,
     streakDays: currentStreak(entries, now, tzOffsetMinutes),
     concepts,
+    needsPractice: weakestConcepts(concepts, WEAK_MIN_ATTEMPTS, WEAK_LIMIT),
   };
 }
 
@@ -80,4 +86,17 @@ export function currentStreak(entries: readonly HistoryEntry[], now: number, tzO
     day -= 1;
   }
   return streak;
+}
+
+/**
+ * The concepts the human struggles with most: lowest pass rate first, at most `limit` of them.
+ * Only concepts with at least `minAttempts` attempts and at least one failure qualify.
+ */
+export function weakestConcepts(concepts: readonly ConceptStats[], minAttempts: number, limit: number): ConceptStats[] {
+  if (limit <= 0) return [];
+  const rate = (s: ConceptStats) => s.passed / s.attempted;
+  return concepts
+    .filter((s) => s.attempted >= minAttempts && s.passed < s.attempted)
+    .sort((a, b) => rate(a) - rate(b) || b.attempted - a.attempted || a.concept.localeCompare(b.concept))
+    .slice(0, limit);
 }

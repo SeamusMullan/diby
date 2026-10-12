@@ -2,7 +2,7 @@
   "name": "diby",
   "displayName": "Diby",
   "description": "Do it by yourself: let your coding agent hand you a function to implement, with a spec and tests, so your skills stay sharp. Works with Claude Code, Codex and GitHub Copilot.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "seamusmullan",
   "license": "MIT",
   "icon": "media/icon-square.png",

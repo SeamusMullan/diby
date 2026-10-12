@@ -111,17 +111,17 @@ ${finalSection(c)}
 }
 
 const STYLE = `
-body { font-family: var(--vscode-font-family); font-size: var(--vscode-font-size); color: var(--vscode-foreground); background: var(--vscode-editor-background); padding: 12px 20px 40px; line-height: 1.5; }
+body { font-family: var(--vscode-font-family, system-ui), system-ui, sans-serif; font-size: var(--vscode-font-size); color: var(--vscode-foreground); background: var(--vscode-editor-background); padding: 12px 20px 40px; line-height: 1.5; }
 header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-h1 { font-size: 1.5em; margin: 0; font-family: var(--vscode-editor-font-family); }
+h1 { font-size: 1.5em; margin: 0; font-family: var(--vscode-editor-font-family, monospace), monospace; }
 h2,h3,h4,h5 { margin: 1.2em 0 .4em; }
 .chips { margin: 6px 0; display: flex; gap: 6px; flex-wrap: wrap; }
 .chip { background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); border-radius: 10px; padding: 0 8px; font-size: .85em; }
 .status { font-size: .9em; padding: 1px 8px; border-radius: 3px; border: 1px solid var(--vscode-panel-border); }
 .status.passed { border-color: var(--vscode-testing-iconPassed); color: var(--vscode-testing-iconPassed); }
 .status.gave_up, .status.cancelled, .status.declined { color: var(--vscode-descriptionForeground); }
-pre { background: var(--vscode-textCodeBlock-background); padding: 8px 10px; border-radius: 4px; overflow-x: auto; font-family: var(--vscode-editor-font-family); font-size: var(--vscode-editor-font-size); white-space: pre-wrap; }
-code { font-family: var(--vscode-editor-font-family); background: var(--vscode-textCodeBlock-background); padding: 0 3px; border-radius: 3px; }
+pre { background: var(--vscode-textCodeBlock-background); padding: 8px 10px; border-radius: 4px; overflow-x: auto; font-family: var(--vscode-editor-font-family, monospace), monospace; font-size: var(--vscode-editor-font-size); white-space: pre-wrap; }
+code { font-family: var(--vscode-editor-font-family, monospace), monospace; background: var(--vscode-textCodeBlock-background); padding: 0 3px; border-radius: 3px; }
 pre code { background: none; padding: 0; }
 .actions { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
 button { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: 1px solid transparent; padding: 4px 14px; cursor: pointer; border-radius: 2px; font-family: inherit; font-size: inherit; }

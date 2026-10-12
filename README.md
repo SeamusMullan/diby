@@ -82,11 +82,11 @@ Set with `diby.mode` or the **Diby: Set Mode** command.
 | Language | Status |
 | --- | --- |
 | Python | ✅ Supported (pytest) |
+| TypeScript / JavaScript | ✅ Supported (vitest; other runners use the exit code) |
 | Any language with a test command | ✅ Via the generic adapter (exit code based, stub must contain `DIBY`) |
 | C++ | 🛠 Next |
 | C | 🗓 Planned |
 | Java | 🗓 Planned |
-| TypeScript / JavaScript | 🗓 Planned |
 
 ## Quick start
 

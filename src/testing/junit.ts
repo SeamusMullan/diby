@@ -1,5 +1,5 @@
 /**
- * MODULE languages — JUnit XML parsing (pytest now; Surefire, vitest/jest junit later). Pure.
+ * MODULE languages — JUnit XML parsing (pytest, vitest; Surefire, jest junit later). Pure.
  */
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import type { TestCaseResult } from '../types';

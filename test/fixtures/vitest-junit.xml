@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="4" failures="2" errors="0" time="0.004129917">
+    <testsuite name="test/core/demo.test.ts" tests="4" failures="2" errors="0" skipped="1" time="0.004129917">
+        <testcase classname="test/core/demo.test.ts" name="grp &gt; passes" time="0.000614">
+        </testcase>
+        <testcase classname="test/core/demo.test.ts" name="grp &gt; fails" time="0.002679167">
+            <failure message="expected [ 1, 2 ] to deeply equal [ 2, 1 ]" type="AssertionError">
+AssertionError: expected [ 1, 2 ] to deeply equal [ 2, 1 ]
+
+- Expected
++ Received
+
+  [
+-   2,
+    1,
++   2,
+  ]
+
+ ❯ test/core/demo.test.ts:4:36
+            </failure>
+        </testcase>
+        <testcase classname="test/core/demo.test.ts" name="grp &gt; skipped" time="0">
+            <skipped/>
+        </testcase>
+        <testcase classname="test/core/demo.test.ts" name="throws" time="0.00027425">
+            <failure message="boom" type="TypeError">
+TypeError: boom
+ ❯ test/core/demo.test.ts:7:28
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

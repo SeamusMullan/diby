@@ -11,6 +11,7 @@
 import type { LanguageAdapter, LanguageRegistry } from '../types';
 import { createGenericAdapter } from './generic';
 import { createPythonAdapter, type PythonAdapterDeps } from './python';
+import { createTypeScriptAdapter } from './typescript';
 
 export interface LanguageRegistryDeps {
   python?: PythonAdapterDeps;
@@ -19,7 +20,7 @@ export interface LanguageRegistryDeps {
 /** Create a registry; unknown languages resolve to the generic exit-code adapter. */
 export function createLanguageRegistry(deps: LanguageRegistryDeps = {}): LanguageRegistry {
   const generic = createGenericAdapter();
-  const specific: LanguageAdapter[] = [createPythonAdapter(deps.python)];
+  const specific: LanguageAdapter[] = [createPythonAdapter(deps.python), createTypeScriptAdapter()];
   const byName = new Map<string, LanguageAdapter>();
   for (const a of specific) {
     byName.set(a.id.toLowerCase(), a);

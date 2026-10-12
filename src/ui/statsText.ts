@@ -25,5 +25,8 @@ export function formatStats(stats: PracticeStats): string[] {
     const top = stats.concepts.slice(0, TOP_CONCEPTS).map((c) => `${c.concept} ${c.passed}/${c.attempted}`);
     lines.push(`Top concepts: ${top.join(', ')}`);
   }
+  if (stats.needsPractice.length > 0) {
+    lines.push(`Needs practice: ${stats.needsPractice.map((c) => `${c.concept} ${c.passed}/${c.attempted}`).join(', ')}`);
+  }
   return lines;
 }

@@ -12,8 +12,7 @@ import type {
   TestDiagnostic,
   TestRunResult,
 } from '../types';
-import { parseJUnitXml, summarizeCases } from '../testing/junit';
-import { capOutput, exitCodeResult } from './generic';
+import { exitCodeResult, junitResult } from './generic';
 
 export interface PythonAdapterDeps {
   /** Returns an absolute interpreter path for the folder (VS Code-backed in production). */
@@ -163,31 +162,15 @@ function diagnosticsFor(cases: readonly TestCaseResult[]): TestDiagnostic[] {
 }
 
 function parseResults(raw: RawTestOutput): TestRunResult {
+  if (raw.reportXml) {
+    // A malformed report falls back to the exit code, as before.
+    return junitResult(raw, { diagnostics: diagnosticsFor }) ?? exitCodeResult(raw);
+  }
   const base = exitCodeResult(raw);
-  if (!raw.reportXml) {
-    if (!base.ok && PLUGIN_CRASH_RE.test(`${raw.stdout}\n${raw.stderr}`)) {
-      base.stderr = `${PLUGIN_AUTOLOAD_HINT}\n\n${base.stderr}`;
-    }
-    return base;
+  if (!base.ok && PLUGIN_CRASH_RE.test(`${raw.stdout}\n${raw.stderr}`)) {
+    base.stderr = `${PLUGIN_AUTOLOAD_HINT}\n\n${base.stderr}`;
   }
-  let cases: TestCaseResult[];
-  try {
-    cases = parseJUnitXml(raw.reportXml);
-  } catch {
-    return base;
-  }
-  const counts = summarizeCases(cases);
-  const ok =
-    raw.exitCode === 0 && !raw.timedOut && counts.failed === 0 && counts.errors === 0 && counts.total > 0;
-  return {
-    ...base,
-    ok,
-    cases,
-    ...counts,
-    stdout: capOutput(raw.stdout),
-    stderr: capOutput(raw.stderr),
-    diagnostics: diagnosticsFor(cases),
-  };
+  return base;
 }
 
 /** Python adapter: pytest with JUnit XML reporting (id `python`, aliases `py`, `python3`). */
