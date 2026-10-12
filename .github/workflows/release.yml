@@ -1,0 +1,80 @@
+name: Release
+
+# Push a tag like v0.1.0 (e.g. `npm version minor && git push --follow-tags`) to build the
+# .vsix and publish it on the GitHub Releases page. Running the workflow manually builds the
+# .vsix as a downloadable workflow artifact without creating a release.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  vsix:
+    name: Build and release .vsix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Read version
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Check tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          if [ "${GITHUB_REF_NAME}" != "v${{ steps.version.outputs.version }}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match package.json version ${{ steps.version.outputs.version }}"
+            exit 1
+          fi
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Build before testing so test/e2e/bridge-shim.test.ts exercises the real dist/mcp-shim.js.
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      # vsce runs `vscode:prepublish`, which rebuilds dist/ minified for production.
+      - name: Package
+        run: npx vsce package --no-dependencies -o "diby-${{ steps.version.outputs.version }}.vsix"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: diby-${{ steps.version.outputs.version }}
+          path: diby-${{ steps.version.outputs.version }}.vsix
+          if-no-files-found: error
+
+      # 0.x versions and versions with a suffix (e.g. 0.2.0-beta.1) are marked as pre-releases.
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          flags=()
+          if [[ "$VERSION" == 0.* || "$VERSION" == *-* ]]; then flags+=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" "diby-$VERSION.vsix" \
+            --title "Diby $GITHUB_REF_NAME" \
+            --generate-notes \
+            "${flags[@]}"

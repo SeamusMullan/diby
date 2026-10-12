@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="media/logo-wordmark-dark.svg">
-  <img src="media/logo-wordmark.svg" alt="Diby: do it by yourself" width="400">
+  <source media="(prefers-color-scheme: dark)" srcset="media/logo-wordmark-dark.png">
+  <img src="media/logo-wordmark.png" alt="Diby: do it by yourself" width="400">
 </picture>
 
 **Do it by yourself — your coding agent hands you the interesting bits.**
@@ -89,7 +89,13 @@ Set with `diby.mode` or the **Diby: Set Mode** command.
 
 ## Quick start
 
-Diby is not on the Marketplace yet, so install from source.
+Diby is not on the Marketplace yet. Install the `.vsix` from the [latest release](https://github.com/SeamusMullan/diby/releases/latest):
+
+```sh
+code --install-extension diby-<version>.vsix
+```
+
+Or use **Extensions: Install from VSIX...** in the command palette. To run from source instead:
 
 ```sh
 git clone https://github.com/SeamusMullan/diby.git
@@ -98,8 +104,8 @@ npm install
 npm run build
 ```
 
-1. Open the folder in VS Code and press **F5** to launch an Extension Development Host.
-2. In the host window, open your project and run **Diby: Connect Agents** from the command palette. Pick the agents you use.
+1. From source: open the folder in VS Code and press **F5** to launch an Extension Development Host, then use the host window.
+2. Open your project and run **Diby: Connect Agents** from the command palette. Pick the agents you use.
 3. Ask your agent for something with a self-contained helper, for example "add a `--timeout 1h30m` flag to the CLI". If the frequency policy says yes, you get an offer.
 
 No agent handy? Try the bundled sample. Open `examples/python-sample`, run **Diby: Start Demo Challenge**, and implement `parse_duration`. See the [sample README](examples/python-sample/README.md). The demo's test command uses [`uv`](https://docs.astral.sh/uv/).

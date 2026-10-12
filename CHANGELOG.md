@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.1] - 2026-10-12
+
 ### Added
 
 - Initial project scaffold: extension manifest, build and test tooling, MCP shim and HTTP bridge layout, Python and generic language adapters, and open-source repository boilerplate (CI, issue and PR templates, contributing guide, code of conduct).
+- Release workflow that builds the `.vsix` and attaches it to a GitHub release.
 
 ### Changed
 

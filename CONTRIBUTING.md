@@ -51,6 +51,16 @@ Use a short imperative subject (about 72 characters or fewer). Add a body when t
 - Fill in the PR template.
 - Add a line under `[Unreleased]` in `CHANGELOG.md` for user-visible changes.
 
+## Releasing
+
+Releases are built by [`.github/workflows/release.yml`](.github/workflows/release.yml):
+
+1. Move the `[Unreleased]` entries in `CHANGELOG.md` under a new version heading and commit.
+2. Run `npm version <patch|minor|major>`. This bumps `package.json` and creates a `vX.Y.Z` tag.
+3. Run `git push --follow-tags`.
+
+The workflow checks that the tag matches `package.json`, then runs typecheck, build and tests. It packages `diby-X.Y.Z.vsix` and attaches it to a new GitHub release. `0.x` and suffixed versions are marked as pre-releases. To build a `.vsix` without releasing, run the workflow manually from the Actions tab and download it from the run's artifacts. Locally, `npm run package` does the same.
+
 ## Reporting issues
 
 Use the issue templates. For security problems, please do not open a public issue. Contact the maintainers privately through GitHub instead.

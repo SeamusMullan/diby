@@ -182,7 +182,7 @@
     "test:watch": "vitest",
     "check": "npm run typecheck && npm run build && npm run test",
     "vscode:prepublish": "node esbuild.mjs --production",
-    "package": "vsce package"
+    "package": "vsce package --no-dependencies"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
