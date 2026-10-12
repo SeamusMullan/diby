@@ -399,5 +399,5 @@ To run the sample's tests locally: `cd examples/python-sample && uv run --with p
 ## 7. Open items for the integrator
 
 - Write `README.md` for the public repo: hero/tagline, GIF placeholder, how it works, a supported-agents table, install, Connect Agents, modes, writing adapters, contributing and license. It is **not** owned by any implementer.
-- ~~Add a `media/icon.png` and an `icon` field in package.json, plus `CHANGELOG.md`.~~ Done (`media/icon.png` is rendered from `media/icon.svg`).
+- ~~Add a `media/icon.png` and an `icon` field in package.json, plus `CHANGELOG.md`.~~ Done. `media/icon.svg` / `media/icon.png` are the human-made source artwork; `media/icon-square.svg` (white tile, rendered to `media/icon-square.png` with `rsvg-convert -w 256 -h 256`) is the Marketplace icon, and `media/logo-wordmark{,-dark}.svg` reuse the same glyph paths.
 - ~~First-run notification that suggests "Diby: Connect Agents".~~ Done (`maybeSuggestConnect` in `src/extension.ts`, shown once per machine).

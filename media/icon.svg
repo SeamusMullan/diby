@@ -1,15 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Diby logo">
-  <title>Diby</title>
-  <!-- Two colours: brand blue and white. Code brackets frame a pencil: write it yourself. -->
-  <rect width="128" height="128" rx="28" fill="#2563EB"/>
-  <g fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="44,36 26,64 44,92"/>
-    <polyline points="84,36 102,64 84,92"/>
-  </g>
-  <g transform="rotate(20 64 64)">
-    <rect x="57" y="26" width="14" height="8" rx="2" fill="#FFFFFF"/>
-    <rect x="57" y="34" width="14" height="46" fill="#FFFFFF"/>
-    <polygon points="57,80 71,80 64,98" fill="#FFFFFF"/>
-    <circle cx="64" cy="94" r="2.6" fill="#2563EB"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2048 2048">
+  <defs>
+    <style>
+      .cls-1{fill:#000000}
+    </style>
+  </defs>
+  <title>2k square</title>
+  <g id="Layer_1" data-name="Layer 1">
+    <g id="Layer_2" data-name="Layer 2">
+      <g>
+        <path d="M642.237 1544.509 L133.219 1122.209 L133.219 925.791 L642.237 503.491 L642.237 674.375 L275.271 972.931 C260.277 984.716 246.269 994.865 233.247 1003.376 C220.226 1011.888 210.559 1017.453 204.245 1020.072 C211.348 1022.691 221.607 1028.256 235.023 1036.767 C248.439 1045.279 261.855 1055.427 275.271 1067.212 L642.237 1367.732 Z" class="cls-1"/>
+        <path d="M1405.763 1544.509 L1405.763 1373.625 L1772.729 1075.069 C1787.723 1063.284 1801.731 1053.135 1814.753 1044.624 C1827.774 1036.112 1837.441 1030.547 1843.755 1027.928 C1836.652 1025.309 1826.393 1019.417 1812.977 1010.251 C1799.561 1001.085 1786.145 991.264 1772.729 980.788 L1405.763 680.268 L1405.763 503.491 L1914.781 925.791 L1914.781 1122.209 Z" class="cls-1"/>
+      </g>
+    </g>
+    <g id="Layer_3" data-name="Layer 3">
+      <g>
+        <path d="M1105.784 738.083 L1238.004 817.527 L942.146 1309.917 L809.996 1230.44 Z M1322.994 603.847 L1264.029 568.417 C1241.241 554.725 1206.385 570.827 1186.167 604.387 L1136.237 687.484 L1268.457 766.93 L1326.698 670.001 C1342.322 643.997 1340.668 614.466 1322.994 603.847 Z M755.597 1453.092 C753.958 1465.358 763.731 1471.157 773.781 1463.715 L910.499 1362.587 L778.35 1283.11 Z" class="cls-1"/>
+      </g>
+    </g>
   </g>
 </svg>

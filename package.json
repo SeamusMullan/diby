@@ -5,9 +5,9 @@
   "version": "0.0.1",
   "publisher": "seamusmullan",
   "license": "MIT",
-  "icon": "media/icon.png",
+  "icon": "media/icon-square.png",
   "galleryBanner": {
-    "color": "#1E3A8A",
+    "color": "#111111",
     "theme": "dark"
   },
   "author": "Seamus Mullan",

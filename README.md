@@ -1,13 +1,16 @@
 <div align="center">
 
-<img src="media/logo-wordmark.svg" alt="Diby: do it by yourself" width="420">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="media/logo-wordmark-dark.svg">
+  <img src="media/logo-wordmark.svg" alt="Diby: do it by yourself" width="400">
+</picture>
 
 **Do it by yourself — your coding agent hands you the interesting bits.**
 
 [![CI](https://github.com/SeamusMullan/diby/actions/workflows/ci.yml/badge.svg)](https://github.com/SeamusMullan/diby/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.101.0-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com/)
-![Status: early preview](https://img.shields.io/badge/status-early%20preview-orange)
+[![License: MIT](https://img.shields.io/badge/license-MIT-111111.svg)](LICENSE)
+[![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.101.0-111111?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com/)
+![Status: early preview](https://img.shields.io/badge/status-early%20preview-555555)
 
 </div>
 
