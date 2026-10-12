@@ -18,11 +18,9 @@
 
 ## Why Diby
 
-AI agents now write more and more of our code, and the skills we stop using start to fade. Diby is a VS Code extension that interleaves deliberate practice into real work: when your agent hits a self-contained function with educational value, it can hand that function to you with a spec and tests, then build the rest of the task around your solution.
+Agents write more and more of our code, and the skills we stop using fade. When your agent reaches a self-contained function worth practising, Diby lets it hand that function to you with a spec and tests, then build the rest of the task around your code.
 
-You stay in the loop on the parts worth thinking about. The agent keeps doing the glue.
-
-> **Early preview.** The core loop works and is covered by automated tests, but it has not yet been exercised inside a real VS Code window. Expect rough edges. See the [roadmap](#roadmap).
+> **Early preview.** Used day to day with Claude Code; Codex and Copilot are untested in a live editor. See the [roadmap](ROADMAP.md).
 
 ## How it works
 
@@ -31,147 +29,64 @@ sequenceDiagram
   participant A as Coding agent
   participant D as Diby (MCP)
   participant Y as You (VS Code)
-  A->>A: Write stub + tests for a self-contained function
+  A->>A: Write stub + tests
   A->>D: diby_delegate(spec, tests, difficulty, ...)
   D->>Y: Offer: Accept / Skip / Snooze
-  A->>D: diby_wait (polls while doing other work)
-  Y->>Y: Implement the function, run the tests
-  Y->>D: All tests green
-  D-->>A: status "passed" + your code, verbatim
-  A->>A: Builds on your code without rewriting it
+  A->>D: diby_wait (keeps working meanwhile)
+  Y->>D: Implement it, tests go green
+  D-->>A: "passed" + your code, verbatim
 ```
 
-If you skip, snooze, give up, or Diby is not running, the agent simply implements the function itself.
+If you skip, give up, or Diby isn't running, the agent writes the function itself.
 
 ## Features
 
-- **Agent-agnostic.** One stdio MCP shim serves Claude Code, Codex and GitHub Copilot agent mode.
-- **Challenge panel** with the agent's spec rendered as markdown, per-test results, and Run Tests / Give Up controls.
-- **CodeLens, status bar and decorations** right on the stubbed function.
-- **Offers you won't miss.** A modal dialog or an editor tab with the full spec (your choice), plus a status bar reminder until you answer.
-- **Frequency control.** Choose how often you get offers, or turn Diby off.
-- **Preferences for agents.** Focus concepts, avoided concepts and a maximum difficulty are passed to the agent.
-- **Your code goes back verbatim.** The agent is instructed not to rewrite, reformat or "improve" it.
-- **Optional reflection.** After you pass, leave a one-line note that is sent to the agent.
-- **One-command setup.** `Diby: Connect Agents` writes the config for you.
-- **Safe by design.** The bridge listens on `127.0.0.1` with a bearer token. Diby requires a trusted workspace because it runs test commands supplied by the agent.
+- **Works with Claude Code, Codex and GitHub Copilot** through one MCP server. `Diby: Connect Agents` sets it up.
+- **Challenge panel** with the spec, per-test results and Run Tests / Give Up.
+- **Offers you won't miss:** a modal, an editor tab or a notification, plus a status bar reminder.
+- **Stays out of your way:** frequency modes, quiet hours, snooze, and inline suggestions turned off while you work.
+- **Progress:** pass rate, daily streak and concepts that need practice (**Diby: Show Stats**).
+- **Your code goes back verbatim;** agents are told not to rewrite it.
+- **Local and token-protected:** the bridge only listens on `127.0.0.1`. Requires a trusted workspace, since it runs agent-supplied test commands.
 
-## Frequency modes
-
-Set with `diby.mode` or the **Diby: Set Mode** command.
-
-| Mode | Behaviour |
-| --- | --- |
-| `off` | Never offer challenges. Agents always write the code themselves. |
-| `checkup` | Rare check-ups: at most one challenge per 24 hours, preferring harder (difficulty 3+) functions. |
-| `steady` (default) | A steady trickle: roughly one challenge per hour. |
-| `learn` | Learning mode: accept most suitable functions the agent offers. |
-
-## Supported agents
-
-| Agent | How it connects | Status |
-| --- | --- | --- |
-| Claude Code | `Connect Agents` merges a `diby` server into `<workspace>/.mcp.json` | ✅ Implemented, untested in a live editor |
-| Codex CLI | `Connect Agents` writes `[mcp_servers.diby]` to `~/.codex/config.toml` (asks first; comments preserved) | ✅ Implemented, untested in a live editor |
-| GitHub Copilot (agent mode) | Registered automatically through VS Code's MCP server definition provider | ✅ Implemented, untested in a live editor |
-
-`Connect Agents` also adds a Diby section to `AGENTS.md` and an `@AGENTS.md` import to `CLAUDE.md`, teaching agents when and how to delegate. It is idempotent.
-
-## Language support
-
-| Language | Status |
-| --- | --- |
-| Python | ✅ Supported (pytest) |
-| TypeScript / JavaScript | ✅ Supported (vitest; other runners use the exit code) |
-| Any language with a test command | ✅ Via the generic adapter (exit code based, stub must contain `DIBY`) |
-| C++ | 🛠 Next |
-| C | 🗓 Planned |
-| Java | 🗓 Planned |
+**Languages:** Python (pytest) and TypeScript / JavaScript (vitest) with per-test results; anything else through its exit code. More are on the [roadmap](ROADMAP.md).
 
 ## Quick start
 
-Diby is not on the Marketplace yet. Install the `.vsix` from the [latest release](https://github.com/SeamusMullan/diby/releases/latest):
+1. Install the `.vsix` from the [latest release](https://github.com/SeamusMullan/diby/releases/latest): `code --install-extension diby-<version>.vsix`.
+2. In your project, run **Diby: Connect Agents** and pick your agents.
+3. Ask your agent for something with a self-contained helper, e.g. "add a `--timeout 1h30m` flag to the CLI".
 
-```sh
-code --install-extension diby-<version>.vsix
-```
-
-Or use **Extensions: Install from VSIX...** in the command palette. To run from source instead:
-
-```sh
-git clone https://github.com/SeamusMullan/diby.git
-cd diby
-npm install
-npm run build
-```
-
-1. From source: open the folder in VS Code and press **F5** to launch an Extension Development Host, then use the host window.
-2. Open your project and run **Diby: Connect Agents** from the command palette. Pick the agents you use.
-3. Ask your agent for something with a self-contained helper, for example "add a `--timeout 1h30m` flag to the CLI". If the frequency policy says yes, you get an offer.
-
-No agent handy? Try the bundled sample. Open `examples/python-sample`, run **Diby: Start Demo Challenge**, and implement `parse_duration`. See the [sample README](examples/python-sample/README.md). The demo's test command uses [`uv`](https://docs.astral.sh/uv/).
-
-Diby only works while VS Code is open with the extension running.
+No agent handy? Open `examples/python-sample` and run **Diby: Start Demo Challenge** ([details](examples/python-sample/README.md)).
 
 ## Configuration
 
 | Setting | Default | Description |
 | --- | --- | --- |
-| `diby.mode` | `steady` | `off`, `checkup`, `steady` or `learn`. How often agents may hand you functions. |
-| `diby.offerStyle` | `modal` | How offers are shown: `modal` (a dialog that waits for your answer), `panel` (an editor tab with the full spec and Accept / Skip / Snooze) or `notification` (a toast, easy to miss). A pending offer also stays on the status bar until you answer. Unanswered offers expire after 2 minutes. |
-| `diby.quietHours` | `""` | Daily local-time window with no offers, e.g. `22:00-07:30` (may cross midnight). Empty for none. |
-| `diby.focusConcepts` | `[]` | Concepts you want to practise (e.g. `recursion`, `parsing`). Preferred when choosing challenges. |
-| `diby.avoidConcepts` | `[]` | Concepts you never want to be handed. |
-| `diby.maxDifficulty` | `5` | Highest difficulty (1-5) Diby will accept. |
-| `diby.testTimeoutSec` | `60` | Seconds before a test run is killed (5-600). |
-| `diby.disableInlineSuggestions` | `true` | Turn off inline suggestions (Copilot ghost text and similar) while a challenge is active; restored when it ends. |
-| `diby.askForReflection` | `true` | Ask for an optional one-line reflection after you pass. |
-| `diby.python.disablePluginAutoload` | `false` | Set `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` for Python challenges. Enable it if unrelated packages on `PYTHONPATH` (for example a sourced ROS environment) register broken pytest plugins. |
+| `diby.mode` | `steady` | `off`, `checkup` (one a day, difficulty 3+), `steady` (about one an hour) or `learn` (most offers). |
+| `diby.offerStyle` | `modal` | `modal`, `panel` (editor tab with the full spec) or `notification`. Offers expire after 2 minutes. |
+| `diby.quietHours` | `""` | Local-time window with no offers, e.g. `22:00-07:30`. |
+| `diby.focusConcepts` / `diby.avoidConcepts` | `[]` | Concepts to prefer or never be handed. |
+| `diby.maxDifficulty` | `5` | Highest difficulty (1-5) to accept. |
+| `diby.disableInlineSuggestions` | `true` | Turn off inline suggestions during a challenge. |
+| `diby.askForReflection` | `true` | Ask for a one-line note after you pass. |
+| `diby.testTimeoutSec` | `60` | Kill test runs after this many seconds. |
+| `diby.python.disablePluginAutoload` | `false` | Set `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`, for broken third-party pytest plugins. |
 
-Other commands: **Run Tests**, **Give Up**, **Show Challenge**, **Snooze for This Session**, **Show Pending Offer**, **Show Stats** (pass rate, daily streak and per-concept totals; the streak also shows on the status bar).
+## For agents
 
-## MCP tools
-
-Exposed to agents by `dist/mcp-shim.js`:
-
-| Tool | Purpose |
-| --- | --- |
-| `diby_delegate` | Offer a stubbed function (spec, tests, test command, concepts, difficulty) to the human. |
-| `diby_wait` | Long-poll for the challenge status; returns the human's code once it has passed. |
-| `diby_cancel` | Withdraw an open challenge. |
-| `diby_preferences` | Read the user's mode, focus/avoid concepts and maximum difficulty. |
-
-## Architecture
-
-The agent talks stdio MCP to a small Node shim, which forwards calls over a token-protected localhost HTTP bridge to the extension host. There, a challenge manager applies the frequency policy, drives the UI and runs tests through language adapters. Details, contracts and module ownership are in [ARCHITECTURE.md](ARCHITECTURE.md).
-
-```
-agent --stdio MCP--> mcp-shim --HTTP (Bearer)--> bridge --> ChallengeManager --> policy / UI / test runner
-```
-
-## Roadmap
-
-- [x] **M0** Architecture and contracts
-- [x] **M1** Core loop: MCP shim, bridge, challenge panel, Python adapter, Connect Agents, demo sample
-- [ ] Verify end to end in a real VS Code window with each agent
-- [ ] Policy refinements and a guard against agents editing a challenge in flight
-- [ ] Hints and code review through `vscode.lm`
-- [ ] C++ adapter
-- [ ] C adapter
-- [ ] Progress and stats
-- [ ] Java adapter
-- [ ] TypeScript / JavaScript adapters
-- [ ] VS Code Marketplace and Open VSX publishing
-
-Known gaps today: endpoint liveness is a pid check only (no health probe), the spec panel uses a simplified markdown renderer without links or images, and the offer timeout lives only in the UI.
+Diby exposes four MCP tools: `diby_preferences`, `diby_delegate`, `diby_wait` and `diby_cancel`. `Connect Agents` writes the MCP config (`.mcp.json`, `~/.codex/config.toml`, or Copilot's provider) and an `AGENTS.md` section explaining when and how to delegate. The design is in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Contributing
 
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) first.
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) first.
 
 ```sh
+npm install
 npm run check   # typecheck, build, test
 ```
+
+Press **F5** in VS Code to launch an Extension Development Host.
 
 ## License
 
