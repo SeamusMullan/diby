@@ -1,0 +1,13 @@
+{
+  "file": "textkit/duration.py",
+  "range": { "startLine": 4, "endLine": 10 },
+  "symbol": "parse_duration",
+  "signature": "def parse_duration(text: str) -> int:",
+  "spec": "Convert a human-readable duration into whole seconds.\n\n- Units: `d` (86400), `h` (3600), `m` (60), `s` (1).\n- Parts can appear in any order, each unit at most once: `\"1h30m\"` -> `5400`, `\"30m1h\"` -> `5400`.\n- Whitespace around and between parts is allowed: `\" 1h 30m \"` -> `5400`.\n- Raise `ValueError` for empty input, unknown units, repeated units, bare numbers (`\"10\"`), negatives or decimals.",
+  "testCommand": "uv run --with pytest pytest -q tests/test_duration.py",
+  "testFiles": ["tests/test_duration.py"],
+  "language": "python",
+  "concepts": ["parsing", "regex", "validation"],
+  "difficulty": 2,
+  "referenceSolution": "import re\n\n_UNITS = {\"d\": 86400, \"h\": 3600, \"m\": 60, \"s\": 1}\n\n\ndef parse_duration(text: str) -> int:\n    s = text.strip()\n    if not s or not re.fullmatch(r\"(?:\\d+\\s*[dhms]\\s*)+\", s):\n        raise ValueError(f\"invalid duration: {text!r}\")\n    seen = set()\n    total = 0\n    for n, unit in re.findall(r\"(\\d+)\\s*([dhms])\", s):\n        if unit in seen:\n            raise ValueError(f\"repeated unit {unit!r} in {text!r}\")\n        seen.add(unit)\n        total += int(n) * _UNITS[unit]\n    return total\n"
+}

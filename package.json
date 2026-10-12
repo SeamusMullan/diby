@@ -1,0 +1,201 @@
+{
+  "name": "diby",
+  "displayName": "Diby",
+  "description": "Do it by yourself: let your coding agent hand you a function to implement, with a spec and tests, so your skills stay sharp. Works with Claude Code, Codex and GitHub Copilot.",
+  "version": "0.0.1",
+  "publisher": "seamusmullan",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#1E3A8A",
+    "theme": "dark"
+  },
+  "author": "Seamus Mullan",
+  "homepage": "https://github.com/SeamusMullan/diby#readme",
+  "bugs": {
+    "url": "https://github.com/SeamusMullan/diby/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SeamusMullan/diby.git"
+  },
+  "keywords": [
+    "mcp",
+    "agents",
+    "claude code",
+    "codex",
+    "copilot",
+    "learning",
+    "practice",
+    "kata"
+  ],
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "categories": [
+    "AI",
+    "Education",
+    "Testing",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Diby runs test commands supplied by your coding agent, so it requires a trusted workspace."
+    },
+    "virtualWorkspaces": false
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "diby.connectAgents",
+        "title": "Connect Agents",
+        "category": "Diby"
+      },
+      {
+        "command": "diby.runTests",
+        "title": "Run Tests",
+        "category": "Diby",
+        "icon": "$(play)"
+      },
+      {
+        "command": "diby.giveUp",
+        "title": "Give Up",
+        "category": "Diby",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "diby.showPanel",
+        "title": "Show Challenge",
+        "category": "Diby"
+      },
+      {
+        "command": "diby.snooze",
+        "title": "Snooze for This Session",
+        "category": "Diby"
+      },
+      {
+        "command": "diby.setMode",
+        "title": "Set Mode",
+        "category": "Diby"
+      },
+      {
+        "command": "diby.startDemoChallenge",
+        "title": "Start Demo Challenge",
+        "category": "Diby"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "diby.runTests",
+          "when": "diby.challengeActive"
+        },
+        {
+          "command": "diby.giveUp",
+          "when": "diby.challengeActive"
+        },
+        {
+          "command": "diby.showPanel",
+          "when": "diby.challengeActive"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Diby",
+      "properties": {
+        "diby.mode": {
+          "type": "string",
+          "enum": [
+            "off",
+            "checkup",
+            "steady",
+            "learn"
+          ],
+          "enumDescriptions": [
+            "Never offer challenges; agents always write the code themselves.",
+            "Rare check-ups: at most one challenge per 24 hours, preferring harder (difficulty 3+) functions.",
+            "A steady trickle: roughly one challenge per hour.",
+            "Learning mode: accept most suitable functions the agent offers."
+          ],
+          "default": "steady",
+          "description": "How often Diby lets your coding agent hand functions back to you."
+        },
+        "diby.focusConcepts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "Concepts you want to practise (e.g. `recursion`, `parsing`, `regex`). Challenges touching these are preferred."
+        },
+        "diby.avoidConcepts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "Concepts you never want to be handed (e.g. `date-time`, `bit-twiddling`)."
+        },
+        "diby.maxDifficulty": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "default": 5,
+          "description": "Highest difficulty (1-5) Diby will accept."
+        },
+        "diby.testTimeoutSec": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 600,
+          "default": 60,
+          "description": "Seconds before a test run is killed."
+        },
+        "diby.python.disablePluginAutoload": {
+          "type": "boolean",
+          "default": false,
+          "description": "Set PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 when running Python challenges. Turn on if unrelated packages on PYTHONPATH (e.g. a sourced ROS environment) register broken pytest plugins."
+        },
+        "diby.askForReflection": {
+          "type": "boolean",
+          "default": true,
+          "description": "After you pass a challenge, ask for an optional one-line reflection that is passed back to the agent."
+        }
+      }
+    },
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "diby",
+        "label": "Diby"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run typecheck && npm run build && npm run test",
+    "vscode:prepublish": "node esbuild.mjs --production",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "fast-xml-parser": "^5.11.2",
+    "smol-toml": "^1.9.1",
+    "zod": "^4.6.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/vscode": "~1.101.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

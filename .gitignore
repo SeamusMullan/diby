@@ -1,0 +1,14 @@
+node_modules/
+dist/
+out/
+*.vsix
+coverage/
+.DS_Store
+*.log
+.vscode-test/
+__pycache__/
+.pytest_cache/
+.venv/
+
+# Local AI session logs
+docs/ai-logs/

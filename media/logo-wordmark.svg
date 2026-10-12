@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="128" viewBox="0 0 440 128" role="img" aria-label="Diby: do it by yourself">
+  <title>Diby</title>
+  <style>
+    /* Text adapts to the reader's theme. GitHub honours prefers-color-scheme inside SVG images. */
+    .wordmark { fill: #111827; }
+    .tagline  { fill: #4B5563; }
+    @media (prefers-color-scheme: dark) {
+      .wordmark { fill: #F9FAFB; }
+      .tagline  { fill: #9CA3AF; }
+    }
+  </style>
+  <!-- Icon (same artwork as media/icon.svg), placed at 128x128 -->
+  <g>
+    <rect width="128" height="128" rx="28" fill="#2563EB"/>
+    <g fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="44,36 26,64 44,92"/>
+      <polyline points="84,36 102,64 84,92"/>
+    </g>
+    <g transform="rotate(20 64 64)">
+      <rect x="57" y="26" width="14" height="8" rx="2" fill="#FFFFFF"/>
+      <rect x="57" y="34" width="14" height="46" fill="#FFFFFF"/>
+      <polygon points="57,80 71,80 64,98" fill="#FFFFFF"/>
+      <circle cx="64" cy="94" r="2.6" fill="#2563EB"/>
+    </g>
+  </g>
+  <text x="148" y="74" class="wordmark" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="70" font-weight="700" letter-spacing="-1">Diby</text>
+  <text x="151" y="104" class="tagline" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" letter-spacing="0.5">do it by yourself</text>
+</svg>

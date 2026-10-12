@@ -1,0 +1,9 @@
+[project]
+name = "textkit"
+version = "0.1.0"
+description = "Tiny text utilities, used to try out Diby."
+requires-python = ">=3.9"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

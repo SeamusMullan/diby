@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an improvement or a new capability.
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the learning or workflow problem, not just the solution you have in mind.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like Diby to do?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Agent integration (MCP tools)
+        - Challenge UI or panel
+        - Policy and modes
+        - Testing and results
+        - Docs
+        - Other
+    validations:
+      required: true

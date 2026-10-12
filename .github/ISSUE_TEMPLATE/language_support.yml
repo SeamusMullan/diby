@@ -1,0 +1,45 @@
+name: Language support request
+description: Ask for a new language adapter, or offer to write one.
+labels: ["language-support", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Diby runs each challenge's tests with a language adapter. Tell us which language and test runner you use.
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: "C++, Java, TypeScript, Go, ..."
+    validations:
+      required: true
+  - type: input
+    id: runner
+    attributes:
+      label: Test runner and build tool
+      description: The runner you would use for the exercises, and how you run it.
+      placeholder: "doctest via CMake, JUnit via Maven, vitest, go test"
+    validations:
+      required: true
+  - type: dropdown
+    id: report-format
+    attributes:
+      label: Can the runner emit a machine-readable report?
+      description: Adapters parse test results from a report file, such as JUnit XML, so the runner needs one.
+      options:
+        - Yes (JUnit XML or similar)
+        - Yes (JSON)
+        - No / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Interpreter or toolchain detection, sandboxing needs, or example repos.
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to write the adapter and tests myself.

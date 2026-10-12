@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="2" skipped="1" tests="6" time="0.013" timestamp="2026-10-12T10:28:29.650764+01:00" hostname="Sarahs-MacBook-Pro.local"><testcase classname="test_x" name="test_ok" time="0.000" /><testcase classname="test_x" name="test_fail" time="0.000"><failure message="assert (1 + 1) == 3">def test_fail():
+&gt;       assert 1 + 1 == 3
+E       assert (1 + 1) == 3
+
+test_x.py:7: AssertionError</failure></testcase><testcase classname="test_x" name="test_err" time="0.000"><error message="failed on setup with &quot;file /private/tmp/proj/test_x.py, line 9&#10;  def test_err(nofixture):&#10;E       fixture 'nofixture' not found&#10;&gt;       available fixtures: cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, subtests, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory&#10;&gt;       use 'pytest --fixtures [testpath]' for help on them.&#10;&#10;/private/tmp/proj/test_x.py:9&quot;">file /private/tmp/proj/test_x.py, line 9
+  def test_err(nofixture):
+E       fixture 'nofixture' not found
+&gt;       available fixtures: cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, subtests, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+&gt;       use 'pytest --fixtures [testpath]' for help on them.
+
+/private/tmp/proj/test_x.py:9</error></testcase><testcase classname="test_x" name="test_skip" time="0.000"><skipped type="pytest.skip" message="not now">/private/tmp/proj/test_x.py:12: not now</skipped></testcase><testcase classname="test_x" name="test_param[1]" time="0.000" /><testcase classname="test_x" name="test_param[2]" time="0.000"><failure message="assert 2 == 1">a = 2
+
+    @pytest.mark.parametrize("a", [1, 2])
+    def test_param(a):
+&gt;       assert a == 1
+E       assert 2 == 1
+
+test_x.py:18: AssertionError</failure></testcase></testsuite></testsuites>
