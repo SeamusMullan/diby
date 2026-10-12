@@ -12,3 +12,8 @@ __pycache__/
 
 # Local AI session logs
 docs/ai-logs/
+
+# Written by "Diby: Connect Agents" (machine-specific)
+.mcp.json
+AGENTS.md
+CLAUDE.md
