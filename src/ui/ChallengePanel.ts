@@ -3,7 +3,7 @@ import { randomBytes } from 'node:crypto';
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { COMMANDS } from '../constants';
-import type { Challenge } from '../types';
+import type { Challenge, OfferAnswer } from '../types';
 import { renderPanelBody, renderPanelHtml } from './panelHtml';
 
 interface PanelMessage {
@@ -11,7 +11,16 @@ interface PanelMessage {
   file?: string;
 }
 
+const OFFER_MESSAGES: Readonly<Record<string, OfferAnswer>> = {
+  acceptOffer: 'accept',
+  skipOffer: 'skip',
+  snoozeOffer: 'snooze',
+};
+
 export class ChallengePanel implements vscode.Disposable {
+  /** `onOfferAnswer` receives Accept / Skip / Snooze clicks on a pending challenge. */
+  constructor(private readonly onOfferAnswer?: (id: string, answer: OfferAnswer) => void) {}
+
   private panel: vscode.WebviewPanel | undefined;
   private shownId: string | undefined;
   private latest: Challenge | undefined;
@@ -56,6 +65,11 @@ export class ChallengePanel implements vscode.Disposable {
   private onMessage(message: PanelMessage): void {
     const c = this.latest;
     if (!c || typeof message !== 'object' || message === null) return;
+    const answer = typeof message.type === 'string' ? OFFER_MESSAGES[message.type] : undefined;
+    if (answer) {
+      if (c.status === 'pending') this.onOfferAnswer?.(c.id, answer);
+      return;
+    }
     switch (message.type) {
       case 'runTests':
         void vscode.commands.executeCommand(COMMANDS.runTests, c.id);

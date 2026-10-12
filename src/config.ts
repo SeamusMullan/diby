@@ -2,9 +2,10 @@
  * Reads `diby.*` settings. Thin VS Code-facing helper owned by the INTEGRATOR.
  */
 import * as vscode from 'vscode';
-import type { DibyMode, DibySettings, Difficulty } from './types';
+import type { DibyMode, DibySettings, Difficulty, OfferStyle } from './types';
 
 const MODES: readonly DibyMode[] = ['off', 'checkup', 'steady', 'learn'];
+const OFFER_STYLES: readonly OfferStyle[] = ['modal', 'panel', 'notification'];
 
 function clampDifficulty(n: unknown): Difficulty {
   const v = typeof n === 'number' && Number.isFinite(n) ? Math.round(n) : 5;
@@ -27,6 +28,12 @@ export function readSettings(): DibySettings {
     testTimeoutSec: Math.min(600, Math.max(5, c.get<number>('testTimeoutSec', 60))),
     askForReflection: c.get<boolean>('askForReflection', true),
   };
+}
+
+/** `diby.offerStyle`, falling back to `modal` for unknown values. */
+export function readOfferStyle(): OfferStyle {
+  const style = vscode.workspace.getConfiguration('diby').get<string>('offerStyle', 'modal');
+  return (OFFER_STYLES as readonly string[]).includes(style) ? (style as OfferStyle) : 'modal';
 }
 
 /** Update `diby.mode` globally. */

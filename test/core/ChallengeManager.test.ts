@@ -370,6 +370,20 @@ describe('runTests / giveUp / cancel', () => {
     expect(ui.show).not.toHaveBeenCalled();
   });
 
+  it('an unanswered offer is declined with its own reason, a skip with "skipped"', async () => {
+    const timedOut = setup({ answer: 'timeout' });
+    const a = await timedOut.mgr.delegate(req(), ctx);
+    await flush();
+    expect(timedOut.mgr.get(a.id)).toMatchObject({ status: 'declined', reason: 'not answered in time' });
+    expect(timedOut.history.all()[0]).toMatchObject({ status: 'declined', offered: true });
+    expect(timedOut.ui.show).not.toHaveBeenCalled();
+
+    const skipped = setup({ answer: 'skip' });
+    const b = await skipped.mgr.delegate(req(), ctx);
+    await flush();
+    expect(skipped.mgr.get(b.id)).toMatchObject({ status: 'declined', reason: 'skipped' });
+  });
+
   it('snooze declines a pending offer', async () => {
     const { mgr } = setup({ answer: new Promise<OfferAnswer>(() => {}) });
     const { id } = await mgr.delegate(req(), ctx);

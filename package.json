@@ -2,7 +2,7 @@
   "name": "diby",
   "displayName": "Diby",
   "description": "Do it by yourself: let your coding agent hand you a function to implement, with a spec and tests, so your skills stay sharp. Works with Claude Code, Codex and GitHub Copilot.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "seamusmullan",
   "license": "MIT",
   "icon": "media/icon-square.png",
@@ -87,10 +87,24 @@
         "command": "diby.startDemoChallenge",
         "title": "Start Demo Challenge",
         "category": "Diby"
+      },
+      {
+        "command": "diby.showStats",
+        "title": "Show Stats",
+        "category": "Diby"
+      },
+      {
+        "command": "diby.showOffer",
+        "title": "Show Pending Offer",
+        "category": "Diby"
       }
     ],
     "menus": {
       "commandPalette": [
+        {
+          "command": "diby.showOffer",
+          "when": "diby.offerPending"
+        },
         {
           "command": "diby.runTests",
           "when": "diby.challengeActive"
@@ -124,6 +138,21 @@
           ],
           "default": "steady",
           "description": "How often Diby lets your coding agent hand functions back to you."
+        },
+        "diby.offerStyle": {
+          "type": "string",
+          "enum": [
+            "modal",
+            "panel",
+            "notification"
+          ],
+          "enumDescriptions": [
+            "A dialog in the middle of the window that waits for your answer.",
+            "An editor tab with the full spec and Accept / Skip / Snooze buttons.",
+            "A notification toast (easy to miss: VS Code hides it after a few seconds)."
+          ],
+          "default": "modal",
+          "description": "How Diby asks whether you want to take a function. A pending offer also shows on the status bar until you answer."
         },
         "diby.focusConcepts": {
           "type": "array",

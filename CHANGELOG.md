@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-10-12
+
+### Added
+
+- `diby.offerStyle` setting: show offers as a modal dialog (the new default), an editor tab with the full spec and Accept / Skip / Snooze buttons, or a notification as before.
+- A pending offer stays on the status bar until you answer; click it (or run **Diby: Show Pending Offer**) to open it.
+- **Diby: Show Stats** command and a streak badge on the status bar: pass rate, current daily streak and per-concept totals from your challenge history.
+
+### Fixed
+
+- Offers no longer disappear unseen. The old notification auto-hid after a few seconds and, when nobody answered, the challenge was silently recorded as skipped. Unanswered offers are now marked "not answered in time", and accepting an expired modal or notification tells you it expired instead of doing nothing.
+
 ## [0.0.1] - 2026-10-12
 
 ### Added

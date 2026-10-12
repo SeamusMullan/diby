@@ -25,6 +25,17 @@ function challenge(over: Partial<Challenge> = {}): Challenge {
 }
 
 describe('panel html', () => {
+  it('shows offer buttons while pending and challenge buttons once active', () => {
+    const pending = renderPanelBody(challenge({ status: 'pending' }));
+    for (const action of ['acceptOffer', 'skipOffer', 'snoozeOffer']) expect(pending).toContain(`data-action="${action}"`);
+    expect(pending).not.toContain('data-action="runTests"');
+    const active = renderPanelBody(challenge());
+    expect(active).toContain('data-action="runTests"');
+    expect(active).not.toContain('data-action="acceptOffer"');
+  });
+  it('explains why a challenge was skipped', () => {
+    expect(renderPanelBody(challenge({ status: 'declined', reason: 'not answered in time' }))).toContain('not answered in time');
+  });
   it('escapes all dynamic content', () => {
     const html = renderPanelBody(challenge({ lastRun: run }));
     expect(html).not.toContain('<script');

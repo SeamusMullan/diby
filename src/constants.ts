@@ -71,6 +71,7 @@ export const CODEX_TOOL_TIMEOUT_SEC = 60;
 
 /** VS Code context key set while a challenge is pending/active. */
 export const CONTEXT_CHALLENGE_ACTIVE = 'diby.challengeActive';
+export const CONTEXT_OFFER_PENDING = 'diby.offerPending';
 
 /** Command ids (must match package.json). */
 export const COMMANDS = {
@@ -81,6 +82,8 @@ export const COMMANDS = {
   snooze: 'diby.snooze',
   setMode: 'diby.setMode',
   startDemoChallenge: 'diby.startDemoChallenge',
+  showStats: 'diby.showStats',
+  showOffer: 'diby.showOffer',
 } as const;
 
 /** globalState key for history. */

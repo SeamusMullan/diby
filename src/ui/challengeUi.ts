@@ -4,28 +4,45 @@
  */
 import * as path from 'node:path';
 import * as vscode from 'vscode';
-import { CONTEXT_CHALLENGE_ACTIVE, OFFER_TIMEOUT_MS, REFLECTION_TIMEOUT_MS } from '../constants';
+import { readOfferStyle } from '../config';
+import { COMMANDS, CONTEXT_CHALLENGE_ACTIVE, CONTEXT_OFFER_PENDING, OFFER_TIMEOUT_MS, REFLECTION_TIMEOUT_MS } from '../constants';
 import type { Challenge, ChallengeUi, LanguageAdapter, LineRange, OfferAnswer } from '../types';
+import type { PracticeStats } from '../core/stats';
 import { ChallengePanel } from './ChallengePanel';
 import { ChallengeCodeLensProvider } from './codelens';
 import { RegionDecorations } from './decorations';
 import { DibyStatusBar } from './statusBar';
+import { offerDetail, offerMessage } from './offerText';
 import { extractRange, shiftRangeAll } from './textRange';
 
 const ACCEPT = 'Accept';
 const SKIP = 'Skip';
 const SNOOZE = 'Snooze for session';
 
+const answerOf = (choice: string | undefined): OfferAnswer | undefined =>
+  choice === ACCEPT ? 'accept' : choice === SKIP ? 'skip' : choice === SNOOZE ? 'snooze' : undefined;
+
+interface PendingOffer {
+  challenge: Challenge;
+  settle(answer: OfferAnswer): void;
+}
+
 function uriOf(challenge: Challenge): vscode.Uri {
   return vscode.Uri.file(challenge.file?.absPath ?? challenge.request.file);
 }
 
-/** Build the VS Code UI. Dispose it when the extension deactivates. */
-export function createChallengeUi(context: vscode.ExtensionContext): ChallengeUi & vscode.Disposable {
-  const panel = new ChallengePanel();
+/** Build the VS Code UI. Dispose it when the extension deactivates. `getStats` feeds the idle status bar item. */
+export function createChallengeUi(
+  context: vscode.ExtensionContext,
+  getStats?: () => PracticeStats,
+): ChallengeUi & vscode.Disposable {
+  let pendingOffer: PendingOffer | undefined;
+  const panel = new ChallengePanel((id, answer) => {
+    if (pendingOffer?.challenge.id === id) pendingOffer.settle(answer);
+  });
   const lenses = new ChallengeCodeLensProvider();
   const decorations = new RegionDecorations();
-  const statusBar = new DibyStatusBar();
+  const statusBar = new DibyStatusBar(getStats);
   const diagnostics = vscode.languages.createDiagnosticCollection('diby');
   let tracked: Challenge | undefined;
 
@@ -60,6 +77,9 @@ export function createChallengeUi(context: vscode.ExtensionContext): ChallengeUi
   };
 
   const subscriptions: vscode.Disposable[] = [
+    vscode.commands.registerCommand(COMMANDS.showOffer, () => {
+      if (pendingOffer) panel.show(pendingOffer.challenge);
+    }),
     panel,
     lenses,
     decorations,
@@ -85,14 +105,49 @@ export function createChallengeUi(context: vscode.ExtensionContext): ChallengeUi
   context.subscriptions.push(...subscriptions);
 
   return {
-    async offer(challenge: Challenge): Promise<OfferAnswer> {
-      const r = challenge.request;
-      const text = `An agent wants you to implement \`${r.symbol}\` (difficulty ${r.difficulty}/5${r.concepts.length ? `, ${r.concepts.join(', ')}` : ''}). Do it by yourself?`;
-      const choice = await Promise.race([
-        vscode.window.showInformationMessage(text, ACCEPT, SKIP, SNOOZE),
-        new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), OFFER_TIMEOUT_MS)),
-      ]);
-      return choice === ACCEPT ? 'accept' : choice === SNOOZE ? 'snooze' : 'skip';
+    offer(challenge: Challenge): Promise<OfferAnswer> {
+      return new Promise<OfferAnswer>((resolve) => {
+        let settled = false;
+        const settle = (answer: OfferAnswer): void => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          pendingOffer = undefined;
+          statusBar.set(undefined);
+          void vscode.commands.executeCommand('setContext', CONTEXT_OFFER_PENDING, false);
+          resolve(answer);
+        };
+        const timer = setTimeout(() => settle('timeout'), OFFER_TIMEOUT_MS);
+        // A modal or notification can't be closed programmatically, so it may be answered after the
+        // timeout. Say so rather than ignoring the click.
+        const late = (choice: string | undefined): void => {
+          const answer = answerOf(choice);
+          if (!settled) {
+            if (answer) settle(answer);
+          } else if (answer === 'accept') {
+            void vscode.window.showInformationMessage(`Diby: the offer for \`${challenge.request.symbol}\` expired, so the agent is writing it.`);
+          }
+        };
+
+        pendingOffer = { challenge, settle };
+        statusBar.setOffer(challenge);
+        void vscode.commands.executeCommand('setContext', CONTEXT_OFFER_PENDING, true);
+
+        const text = offerMessage(challenge.request);
+        const style = readOfferStyle();
+        if (style === 'modal') {
+          // Closing the dialog (Esc / Cancel) counts as Skip.
+          void Promise.resolve(
+            vscode.window.showInformationMessage(text, { modal: true, detail: offerDetail(challenge.request) }, ACCEPT, SKIP, SNOOZE),
+          ).then((choice) => late(choice ?? SKIP), () => late(SKIP));
+        } else if (style === 'panel') {
+          panel.show(challenge);
+        } else {
+          // An auto-hidden toast never resolves; one closed with X resolves undefined. Either way
+          // the status bar item stays until an answer or the timeout.
+          void Promise.resolve(vscode.window.showInformationMessage(text, ACCEPT, SKIP, SNOOZE)).then(late, () => undefined);
+        }
+      });
     },
 
     async show(challenge: Challenge): Promise<void> {
@@ -119,6 +174,8 @@ export function createChallengeUi(context: vscode.ExtensionContext): ChallengeUi
     },
 
     clear(challenge: Challenge): void {
+      // E.g. the agent cancelled while the offer was open. The manager ignores this late answer.
+      if (pendingOffer?.challenge.id === challenge.id) pendingOffer.settle('skip');
       if (tracked?.id !== challenge.id) return;
       tracked = undefined;
       decorations.set(undefined);

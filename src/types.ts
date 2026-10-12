@@ -268,7 +268,11 @@ export interface Challenge {
 }
 
 /** Answer to the "Accept / Skip / Snooze" offer. `skip` is also used when the offer is dismissed or times out. */
-export type OfferAnswer = 'accept' | 'skip' | 'snooze';
+/** `timeout`: nobody answered within OFFER_TIMEOUT_MS (treated like a skip, with its own reason). */
+export type OfferAnswer = 'accept' | 'skip' | 'snooze' | 'timeout';
+
+/** How an offer is presented (`diby.offerStyle`). */
+export type OfferStyle = 'modal' | 'panel' | 'notification';
 
 // ---------------------------------------------------------------------------
 // Policy + history

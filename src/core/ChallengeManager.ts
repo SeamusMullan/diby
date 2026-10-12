@@ -393,7 +393,7 @@ export class ChallengeManager implements ToolHandlers, DisposableLike {
       return;
     }
     if (answer === 'snooze') this.isSnoozed = true;
-    challenge.reason = answer === 'snooze' ? 'snoozed' : 'skipped';
+    challenge.reason = answer === 'snooze' ? 'snoozed' : answer === 'timeout' ? 'not answered in time' : 'skipped';
     this.finish(challenge, 'declined');
   }
 

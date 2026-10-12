@@ -14,7 +14,9 @@ import type { BridgeServer, DibyMode, EndpointInfo, ToolHandlers } from './types
 import { ChallengeManager } from './core/ChallengeManager';
 import { decide } from './core/policy';
 import { MementoHistoryStore } from './core/history';
+import { computeStats } from './core/stats';
 import { createChallengeUi } from './ui/challengeUi';
+import { formatStats } from './ui/statsText';
 import { createWorkspaceAccess } from './ui/workspace';
 // transport
 import { startBridge } from './bridge/server';
@@ -37,12 +39,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   log(`Diby ${DIBY_VERSION} activating`);
 
   // --- core ---
-  const ui = createChallengeUi(context);
+  const history = new MementoHistoryStore(context.globalState);
+  // getTimezoneOffset() is UTC minus local; stats want local minus UTC.
+  const stats = () => computeStats(history.all(), Date.now(), -new Date().getTimezoneOffset());
+  const ui = createChallengeUi(context, stats);
   context.subscriptions.push(ui);
   const manager = new ChallengeManager({
     ui,
     workspace: createWorkspaceAccess(),
-    history: new MementoHistoryStore(context.globalState),
+    history,
     languages: createLanguageRegistry({
       python: {
         resolveInterpreter: resolvePythonInterpreter,
@@ -79,6 +84,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand(COMMANDS.snooze, () => manager.snooze()),
     vscode.commands.registerCommand(COMMANDS.setMode, pickMode),
     vscode.commands.registerCommand(COMMANDS.startDemoChallenge, (uri?: vscode.Uri) => startDemo(manager, uri)),
+    vscode.commands.registerCommand(COMMANDS.showStats, () => showStats(stats)),
   );
 
   // --- transport: shim + bridge + endpoint files ---
@@ -181,6 +187,11 @@ async function pickMode(): Promise<void> {
   }));
   const picked = await vscode.window.showQuickPick(items, { title: 'Diby mode' });
   if (picked) await setMode(picked.mode);
+}
+
+async function showStats(stats: () => ReturnType<typeof computeStats>): Promise<void> {
+  const [headline, ...rest] = formatStats(stats());
+  await vscode.window.showInformationMessage(`Diby: ${headline}`, { modal: true, detail: rest.join('\n') });
 }
 
 /** Load a DelegateRequest JSON (e.g. examples/python-sample/.diby/demo-challenge.json) and start it, bypassing policy. */

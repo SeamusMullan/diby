@@ -67,7 +67,7 @@ function finalSection(c: Challenge): string {
   } else if (c.status === 'cancelled') {
     parts.push(`<div class="banner warn"><strong>Cancelled.</strong>${c.reason ? ` ${escapeHtml(c.reason)}` : ''}</div>`);
   } else if (c.status === 'declined') {
-    parts.push('<div class="banner warn"><strong>Skipped.</strong></div>');
+    parts.push(`<div class="banner warn"><strong>Skipped.</strong>${c.reason ? ` ${escapeHtml(c.reason)}` : ''}</div>`);
   }
   if ((c.status === 'passed' || c.status === 'gave_up') && c.request.referenceSolution) {
     parts.push(`<details data-key="reference"><summary>Reference solution</summary><pre>${escapeHtml(c.request.referenceSolution)}</pre></details>`);
@@ -75,9 +75,26 @@ function finalSection(c: Challenge): string {
   return parts.join('\n');
 }
 
+function offerActions(): string {
+  return `<p class="offer">An agent wants you to implement this function. Do it by yourself?</p>
+<div class="actions">
+  <button data-action="acceptOffer">Accept</button>
+  <button data-action="skipOffer" class="secondary">Skip</button>
+  <button data-action="snoozeOffer" class="secondary">Snooze for session</button>
+</div>`;
+}
+
+function challengeActions(c: Challenge): string {
+  const inProgress = c.status === 'active';
+  return `<div class="actions">
+  <button data-action="runTests"${inProgress && !c.testsRunning ? '' : ' disabled'}>${c.testsRunning ? 'Running&hellip;' : 'Run Tests'}</button>
+  <button data-action="giveUp" class="secondary"${inProgress ? '' : ' disabled'}>Give Up</button>
+  <button data-action="openFile" data-file="${escapeHtml(c.file?.absPath ?? c.request.file)}" class="secondary">Go to function</button>
+</div>`;
+}
+
 /** The inner content of the panel (re-rendered on every state change). */
 export function renderPanelBody(c: Challenge): string {
-  const inProgress = c.status === 'active';
   const req = c.request;
   const meta = [`difficulty ${req.difficulty}/5`, ...req.concepts].map((m) => `<span class="chip">${escapeHtml(m)}</span>`).join('');
   return `
@@ -87,11 +104,7 @@ export function renderPanelBody(c: Challenge): string {
 </header>
 <div class="chips">${meta}</div>
 <pre class="signature"><code>${escapeHtml(req.signature)}</code></pre>
-<div class="actions">
-  <button data-action="runTests"${inProgress && !c.testsRunning ? '' : ' disabled'}>${c.testsRunning ? 'Running&hellip;' : 'Run Tests'}</button>
-  <button data-action="giveUp" class="secondary"${inProgress ? '' : ' disabled'}>Give Up</button>
-  <button data-action="openFile" data-file="${escapeHtml(c.file?.absPath ?? req.file)}" class="secondary">Go to function</button>
-</div>
+${c.status === 'pending' ? offerActions() : challengeActions(c)}
 ${finalSection(c)}
 <section class="spec"><h3>Spec</h3>${renderMarkdownLite(req.spec)}</section>
 <section>${testsSection(c)}</section>`;
@@ -119,6 +132,7 @@ button:disabled { opacity: .5; cursor: default; }
 button:focus-visible, a:focus-visible, summary:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: 2px; }
 a { color: var(--vscode-textLink-foreground); }
 .muted { color: var(--vscode-descriptionForeground); }
+.offer { font-size: 1.1em; margin: 12px 0 0; }
 .banner { padding: 8px 12px; border-left: 3px solid; margin: 10px 0; background: var(--vscode-textBlockQuote-background); }
 .banner.ok { border-color: var(--vscode-testing-iconPassed); }
 .banner.warn { border-color: var(--vscode-editorWarning-foreground); }

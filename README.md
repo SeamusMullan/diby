@@ -48,6 +48,7 @@ If you skip, snooze, give up, or Diby is not running, the agent simply implement
 - **Agent-agnostic.** One stdio MCP shim serves Claude Code, Codex and GitHub Copilot agent mode.
 - **Challenge panel** with the agent's spec rendered as markdown, per-test results, and Run Tests / Give Up controls.
 - **CodeLens, status bar and decorations** right on the stubbed function.
+- **Offers you won't miss.** A modal dialog or an editor tab with the full spec (your choice), plus a status bar reminder until you answer.
 - **Frequency control.** Choose how often you get offers, or turn Diby off.
 - **Preferences for agents.** Focus concepts, avoided concepts and a maximum difficulty are passed to the agent.
 - **Your code goes back verbatim.** The agent is instructed not to rewrite, reformat or "improve" it.
@@ -117,6 +118,7 @@ Diby only works while VS Code is open with the extension running.
 | Setting | Default | Description |
 | --- | --- | --- |
 | `diby.mode` | `steady` | `off`, `checkup`, `steady` or `learn`. How often agents may hand you functions. |
+| `diby.offerStyle` | `modal` | How offers are shown: `modal` (a dialog that waits for your answer), `panel` (an editor tab with the full spec and Accept / Skip / Snooze) or `notification` (a toast, easy to miss). A pending offer also stays on the status bar until you answer. Unanswered offers expire after 2 minutes. |
 | `diby.focusConcepts` | `[]` | Concepts you want to practise (e.g. `recursion`, `parsing`). Preferred when choosing challenges. |
 | `diby.avoidConcepts` | `[]` | Concepts you never want to be handed. |
 | `diby.maxDifficulty` | `5` | Highest difficulty (1-5) Diby will accept. |
@@ -124,7 +126,7 @@ Diby only works while VS Code is open with the extension running.
 | `diby.askForReflection` | `true` | Ask for an optional one-line reflection after you pass. |
 | `diby.python.disablePluginAutoload` | `false` | Set `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` for Python challenges. Enable it if unrelated packages on `PYTHONPATH` (for example a sourced ROS environment) register broken pytest plugins. |
 
-Other commands: **Run Tests**, **Give Up**, **Show Challenge**, **Snooze for This Session**.
+Other commands: **Run Tests**, **Give Up**, **Show Challenge**, **Snooze for This Session**, **Show Pending Offer**, **Show Stats** (pass rate, daily streak and per-concept totals; the streak also shows on the status bar).
 
 ## MCP tools
 

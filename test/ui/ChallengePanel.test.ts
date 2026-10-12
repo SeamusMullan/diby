@@ -58,6 +58,22 @@ const challenge = (id: string, file: string): Challenge => ({
   attempts: 0,
 });
 
+describe('ChallengePanel offers', () => {
+  it('forwards Accept / Skip / Snooze for a pending challenge only', () => {
+    const answers: [string, string][] = [];
+    const panel = new ChallengePanel((id, answer) => answers.push([id, answer]));
+    const c: Challenge = { ...challenge('p', '/ws/p.py'), status: 'pending' };
+    panel.show(c);
+    onMessage?.({ type: 'acceptOffer' });
+    onMessage?.({ type: 'skipOffer' });
+    onMessage?.({ type: 'snoozeOffer' });
+    c.status = 'active';
+    panel.update(c);
+    onMessage?.({ type: 'acceptOffer' });
+    expect(answers).toEqual([['p', 'accept'], ['p', 'skip'], ['p', 'snooze']]);
+  });
+});
+
 describe('ChallengePanel (regression)', () => {
   it('buttons keep acting on the shown challenge when another challenge updates', () => {
     const panel = new ChallengePanel();
